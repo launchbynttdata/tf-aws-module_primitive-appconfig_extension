@@ -48,6 +48,7 @@ variable "action_points" {
       for action_point in var.action_points : contains([
         "PRE_CREATE_HOSTED_CONFIGURATION_VERSION",
         "PRE_START_DEPLOYMENT",
+        "AT_DEPLOYMENT_TICK",
         "ON_DEPLOYMENT_START",
         "ON_DEPLOYMENT_STEP",
         "ON_DEPLOYMENT_BAKING",
