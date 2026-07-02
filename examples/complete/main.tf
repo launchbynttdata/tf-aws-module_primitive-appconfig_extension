@@ -35,6 +35,37 @@ resource "aws_sns_topic" "extension" {
   tags = var.tags
 }
 
+data "aws_iam_policy_document" "appconfig_assume_role" {
+  statement {
+    effect  = "Allow"
+    actions = ["sts:AssumeRole"]
+    principals {
+      type        = "Service"
+      identifiers = ["appconfig.amazonaws.com"]
+    }
+  }
+}
+
+data "aws_iam_policy_document" "sns_publish" {
+  statement {
+    effect    = "Allow"
+    actions   = ["sns:Publish"]
+    resources = [aws_sns_topic.extension.arn]
+  }
+}
+
+resource "aws_iam_role" "extension" {
+  name               = module.resource_names["iam_role"].standard
+  assume_role_policy = data.aws_iam_policy_document.appconfig_assume_role.json
+  tags               = var.tags
+}
+
+resource "aws_iam_role_policy" "extension" {
+  name   = "${module.resource_names["iam_role"].standard}-sns-publish"
+  role   = aws_iam_role.extension.id
+  policy = data.aws_iam_policy_document.sns_publish.json
+}
+
 module "extension" {
   source = "../.."
 
@@ -45,8 +76,9 @@ module "extension" {
       point = "PRE_CREATE_HOSTED_CONFIGURATION_VERSION"
       actions = [
         {
-          name = "Notify"
-          uri  = aws_sns_topic.extension.arn
+          name     = "Notify"
+          uri      = aws_sns_topic.extension.arn
+          role_arn = aws_iam_role.extension.arn
         }
       ]
     }
