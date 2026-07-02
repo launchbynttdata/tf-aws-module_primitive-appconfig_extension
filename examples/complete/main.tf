@@ -73,7 +73,7 @@ module "extension" {
   description = var.description
   action_points = [
     {
-      point = "PRE_CREATE_HOSTED_CONFIGURATION_VERSION"
+      point = "ON_DEPLOYMENT_COMPLETE"
       actions = [
         {
           name     = "Notify"
