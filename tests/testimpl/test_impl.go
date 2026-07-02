@@ -14,9 +14,10 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
-// TestComposableComplete verifies the deployed AppConfig extension.
+// TestComposableComplete verifies the deployed AppConfig extension and exercises a reversible tag write.
 func TestComposableComplete(t *testing.T, ctx types.TestContext) {
-	verifyExtension(t, ctx)
+	client, arn := verifyExtension(t, ctx)
+	exerciseTagWrite(t, client, arn)
 }
 
 // TestComposableCompleteReadOnly verifies the deployed AppConfig extension using read-only AWS API calls.
@@ -24,7 +25,7 @@ func TestComposableCompleteReadOnly(t *testing.T, ctx types.TestContext) {
 	verifyExtension(t, ctx)
 }
 
-func verifyExtension(t *testing.T, ctx types.TestContext) {
+func verifyExtension(t *testing.T, ctx types.TestContext) (*appconfig.Client, string) {
 	opts := ctx.TerratestTerraformOptions()
 	region := terraform.Output(t, opts, "region")
 	id := terraform.Output(t, opts, "id")
@@ -46,6 +47,8 @@ func verifyExtension(t *testing.T, ctx types.TestContext) {
 	assert.Equal(t, arn, aws.ToString(extension.Arn))
 	assert.Equal(t, name, aws.ToString(extension.Name))
 	assert.Equal(t, versionNumber, extension.VersionNumber)
+
+	return client, arn
 }
 
 func appConfigClient(t *testing.T, region string) *appconfig.Client {
@@ -55,6 +58,23 @@ func appConfigClient(t *testing.T, region string) *appconfig.Client {
 	require.NoError(t, err)
 
 	return appconfig.NewFromConfig(cfg)
+}
+
+func exerciseTagWrite(t *testing.T, client *appconfig.Client, resourceARN string) {
+	t.Helper()
+
+	const tagKey = "codex-functional-test"
+	_, err := client.TagResource(context.Background(), &appconfig.TagResourceInput{
+		ResourceArn: aws.String(resourceARN),
+		Tags:        map[string]string{tagKey: "true"},
+	})
+	require.NoError(t, err)
+
+	_, err = client.UntagResource(context.Background(), &appconfig.UntagResourceInput{
+		ResourceArn: aws.String(resourceARN),
+		TagKeys:     []string{tagKey},
+	})
+	require.NoError(t, err)
 }
 
 func int32Output(t *testing.T, ctx types.TestContext, name string) int32 {

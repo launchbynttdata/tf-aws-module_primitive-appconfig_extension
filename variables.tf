@@ -43,6 +43,20 @@ variable "action_points" {
     condition     = alltrue([for action_point in var.action_points : length(action_point.actions) >= 1])
     error_message = "Each action point must include at least one action."
   }
+  validation {
+    condition = alltrue([
+      for action_point in var.action_points : contains([
+        "PRE_CREATE_HOSTED_CONFIGURATION_VERSION",
+        "PRE_START_DEPLOYMENT",
+        "ON_DEPLOYMENT_START",
+        "ON_DEPLOYMENT_STEP",
+        "ON_DEPLOYMENT_BAKING",
+        "ON_DEPLOYMENT_COMPLETE",
+        "ON_DEPLOYMENT_ROLLED_BACK",
+      ], action_point.point)
+    ])
+    error_message = "Each action point must be a documented AppConfig extension point."
+  }
 }
 
 # -----------------------------------------------------------------------------

@@ -29,3 +29,18 @@ output "version" {
   description = "The extension version."
   value       = aws_appconfig_extension.extension.version
 }
+
+output "description" {
+  description = "The extension description."
+  value       = aws_appconfig_extension.extension.description
+}
+
+output "action_points" {
+  description = "The action points and actions defined for the extension."
+  value       = aws_appconfig_extension.extension.action_point
+}
+
+output "parameters" {
+  description = "The parameters accepted by the extension."
+  value       = aws_appconfig_extension.extension.parameter
+}

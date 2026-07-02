@@ -50,9 +50,12 @@ No modules.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_action_points"></a> [action\_points](#output\_action\_points) | The action points and actions defined for the extension. |
 | <a name="output_arn"></a> [arn](#output\_arn) | The ARN of the extension. |
+| <a name="output_description"></a> [description](#output\_description) | The extension description. |
 | <a name="output_id"></a> [id](#output\_id) | The extension ID. |
 | <a name="output_name"></a> [name](#output\_name) | The name of the extension. |
+| <a name="output_parameters"></a> [parameters](#output\_parameters) | The parameters accepted by the extension. |
 | <a name="output_version"></a> [version](#output\_version) | The extension version. |
 <!-- END_TF_DOCS -->
 
