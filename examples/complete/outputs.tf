@@ -12,35 +12,26 @@
 
 output "id" {
   description = "The extension ID."
-  value       = aws_appconfig_extension.extension.id
+  value       = module.extension.id
 }
-
 output "arn" {
   description = "The ARN of the extension."
-  value       = aws_appconfig_extension.extension.arn
+  value       = module.extension.arn
 }
-
 output "name" {
   description = "The name of the extension."
-  value       = aws_appconfig_extension.extension.name
+  value       = module.extension.name
 }
-
 output "version" {
   description = "The extension version."
-  value       = aws_appconfig_extension.extension.version
+  value       = module.extension.version
+}
+output "expected_name" {
+  description = "Expected extension name."
+  value       = module.resource_names["extension"].standard
 }
 
-output "description" {
-  description = "The extension description."
-  value       = aws_appconfig_extension.extension.description
-}
-
-output "action_points" {
-  description = "The action points and actions defined for the extension."
-  value       = aws_appconfig_extension.extension.action_point
-}
-
-output "parameters" {
-  description = "The parameters accepted by the extension."
-  value       = aws_appconfig_extension.extension.parameter
+output "region" {
+  description = "The AWS Region where the example resources are deployed."
+  value       = data.aws_region.current.region
 }

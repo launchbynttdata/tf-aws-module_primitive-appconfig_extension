@@ -10,8 +10,35 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
-resource "random_string" "string" {
-  length  = var.length
-  numeric = var.number
-  special = var.special
+resource "aws_appconfig_extension" "extension" {
+  name        = var.name
+  description = var.description
+  region      = var.region
+  tags        = var.tags
+
+  dynamic "action_point" {
+    for_each = var.action_points
+    content {
+      point = action_point.value.point
+
+      dynamic "action" {
+        for_each = action_point.value.actions
+        content {
+          name        = action.value.name
+          uri         = action.value.uri
+          description = action.value.description
+          role_arn    = action.value.role_arn
+        }
+      }
+    }
+  }
+
+  dynamic "parameter" {
+    for_each = var.parameters
+    content {
+      name        = parameter.value.name
+      description = parameter.value.description
+      required    = parameter.value.required
+    }
+  }
 }
