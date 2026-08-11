@@ -27,14 +27,14 @@ func TestComposableCompleteReadOnly(t *testing.T, ctx types.TestContext) {
 
 func verifyExtension(t *testing.T, ctx types.TestContext) (*appconfig.Client, string) {
 	opts := ctx.TerratestTerraformOptions()
-	region := terraform.Output(t, opts, "region")
-	id := terraform.Output(t, opts, "id")
-	arn := terraform.Output(t, opts, "arn")
-	name := terraform.Output(t, opts, "name")
+	region := terraform.OutputContext(t, context.Background(), opts, "region")
+	id := terraform.OutputContext(t, context.Background(), opts, "id")
+	arn := terraform.OutputContext(t, context.Background(), opts, "arn")
+	name := terraform.OutputContext(t, context.Background(), opts, "name")
 	versionNumber := int32Output(t, ctx, "version")
 
 	require.NotEqual(t, "", id)
-	assert.Equal(t, terraform.Output(t, opts, "expected_name"), name)
+	assert.Equal(t, terraform.OutputContext(t, context.Background(), opts, "expected_name"), name)
 
 	client := appConfigClient(t, region)
 	extension, err := client.GetExtension(context.Background(), &appconfig.GetExtensionInput{
@@ -80,7 +80,7 @@ func exerciseTagWrite(t *testing.T, client *appconfig.Client, resourceARN string
 func int32Output(t *testing.T, ctx types.TestContext, name string) int32 {
 	t.Helper()
 
-	value, err := strconv.ParseInt(terraform.Output(t, ctx.TerratestTerraformOptions(), name), 10, 32)
+	value, err := strconv.ParseInt(terraform.OutputContext(t, context.Background(), ctx.TerratestTerraformOptions(), name), 10, 32)
 	require.NoError(t, err)
 
 	return int32(value)
